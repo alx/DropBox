@@ -79,7 +79,7 @@ class DropBox {
 
       $dropbox_path = Settings::Get ('dropbox_path');
       $message = null;
-      $allowed_extension = ['mov', 'avi', 'mp4'];
+      $allowed_extension = array('mov', 'avi', 'mp4');
 
       if (isset ($_POST['dropbox_settings']) ) {
 
