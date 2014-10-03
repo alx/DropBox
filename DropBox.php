@@ -89,9 +89,11 @@ class DropBox {
       //get all files in specified directory
       $files = glob($path . "/*");
 
+      if(sizeof($files) > 0) {
+
 ?>
 <div class="block list">
-  <h3>Category : <?=$category?></h3>
+<h3>Category : <?=$category?> - <?=sizeof($files)?></h3>
   <form method="post">
     <input type="hidden" name="dropbox_import" value="true" />
     <input type="hidden" name="dropbox_file" value="all" />
@@ -135,6 +137,7 @@ class DropBox {
   </table>
 </div>
 <?php
+      }
     }
 
 
