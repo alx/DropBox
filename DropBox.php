@@ -93,12 +93,12 @@ class DropBox {
 
 ?>
 <div class="block list">
-<h3>Category : <?=$category?> - <?=sizeof($files)?></h3>
+<h3>Category : <?=$category?></h3>
   <form method="post">
     <input type="hidden" name="dropbox_import" value="true" />
     <input type="hidden" name="dropbox_file" value="all" />
     <input type="hidden" name="dropbox_path" value="<?=$path?>" />
-    <input class="button" type="submit" value="Import All" />
+    <input class="button" type="submit" value="Import All" style="float: right;right: 20px;position: relative;"/>
   </form>
   <table>
     <thead>
