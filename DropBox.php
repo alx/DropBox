@@ -191,7 +191,7 @@ class DropBox {
               while (false !== ($entry = readdir($handle))) {
                 $extension = pathinfo($dropbox_import_path . $entry, PATHINFO_EXTENSION);
                 if ($entry != "." && $entry != ".." && in_array($extension, $allowed_extension)) {
-                  DropBox::ConvertVideoFile($entry, $category);
+                  DropBox::ConvertVideoFile($dropbox_import_path . $entry, $category);
                 }
               }
             }
