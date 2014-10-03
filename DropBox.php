@@ -215,7 +215,7 @@ class DropBox {
 
     if($handle = opendir($dropbox_path)) {
 
-      displayDropboxCategory($dropbox_path);
+      DropBox::displayDropboxCategory($dropbox_path);
 
       //get all files in specified directory
       $files = glob($dropbox_path . "*");
@@ -224,7 +224,7 @@ class DropBox {
       foreach($files as $file) {
         //check to see if the file is a folder/directory
         if(is_dir($file)) {
-          displayDropboxCategory($file);
+          DropBox::displayDropboxCategory($file);
         }
       }
 
