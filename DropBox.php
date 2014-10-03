@@ -97,7 +97,7 @@ class DropBox {
 
 ?>
 <div class="block list">
-<h3>Category : <?=$category?></h3>
+<h3>Category : <?= ucwords($category) ?> - <?= sizeof($files) ?> videos</h3>
   <form method="post">
     <input type="hidden" name="dropbox_import" value="true" />
     <input type="hidden" name="dropbox_file" value="all" />
