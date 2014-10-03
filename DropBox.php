@@ -77,6 +77,10 @@ class DropBox {
     static function displayDropboxCategory($path) {
       App::LoadClass ('Settings');
 
+      if (substr($path, -1) != '/') {
+        $path .= '/';
+      }
+
       $dropbox_path = Settings::Get ('dropbox_path');
       $allowed_extension = array('mov', 'avi', 'mp4');
 
@@ -87,7 +91,7 @@ class DropBox {
       }
 
       //get all files in specified directory
-      $files = glob($path . "/*");
+      $files = glob($path . "*");
 
       if(sizeof($files) > 0) {
 
