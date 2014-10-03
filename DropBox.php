@@ -87,7 +87,7 @@ class DropBox {
       }
 
       //get all files in specified directory
-      $files = glob($path . "*");
+      $files = glob($path . "/*");
 
 ?>
 <div class="block list">
