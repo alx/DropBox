@@ -23,8 +23,9 @@ class DropBox {
       Settings::Remove ("dropbox_path");
     }
 
-    static function ConvertVideoFile($filename) {
+    static function ConvertVideoFile($filename, $category) {
       App::LoadClass ('Video');
+      App::LoadClass ('Category');
       App::LoadClass ('Settings');
 
       Functions::RedirectIf ($logged_in = User::LoginCheck(), HOST . '/login/');
@@ -53,6 +54,14 @@ class DropBox {
           throw new Exception (Language::GetText('error_uploadify_system', array ('host' => HOST)));
       }
 
+      $cat_id = Category::Exist(array('slug'=>$category));
+      if(!$cat_id) {
+        $cat_id = Category::Create(array(
+          'cat_name'  => ucwords($category),
+          'slug'      => $category
+        ));
+      }
+
       $data = array();
       $data['title'] = htmlspecialchars (trim ( $filename ));
       $data['filename'] = basename($filename, '.' . $extension);
@@ -64,6 +73,7 @@ class DropBox {
       $data['user_id'] = $admin->user_id;
       $data['original_extension'] = $extension;
       $data['status'] = 'pending conversion';
+      $data['cat_id'] = $cat_id;
       $id = Video::Create($data);
 
       error_log('video to convert : ' . $id);
@@ -101,7 +111,8 @@ class DropBox {
   <form method="post">
     <input type="hidden" name="dropbox_import" value="true" />
     <input type="hidden" name="dropbox_file" value="all" />
-    <input type="hidden" name="dropbox_path" value="<?=$path?>" />
+    <input type="hidden" name="dropbox_import_path" value="<?=$path ?>" />
+    <input type="hidden" name="dropbox_category" value="<?= $category ?>" />
     <input class="button" type="submit" value="Import All" style="float: right;right: 20px;position: relative;"/>
   </form>
   <table>
@@ -126,8 +137,8 @@ class DropBox {
       <td>
         <form method="post">
           <input type="hidden" name="dropbox_import" value="true" />
-          <input type="hidden" name="dropbox_path" value="<?= $path ?>" />
           <input type="hidden" name="dropbox_file" value="<?= $file ?>" />
+          <input type="hidden" name="dropbox_category" value="<?= $category ?>" />
           <input class="button" type="submit" value="Import" />
         </form>
       </td>
@@ -171,25 +182,25 @@ class DropBox {
         if (!empty($_POST['dropbox_file']) && !ctype_space ($_POST['dropbox_file'])) {
 
           $dropbox_file = $_POST['dropbox_file'];
+          $category = $_POST['dropbox_category'];
 
           if($dropbox_file == 'all') {
-            if($handle = opendir($dropbox_path)) {
+            $dropbox_import_path = $_POST['dropbox_import_path'];
+            if($handle = opendir($dropbox_import_path)) {
               while (false !== ($entry = readdir($handle))) {
-                $extension = pathinfo($dropbox_path . $entry, PATHINFO_EXTENSION);
+                $extension = pathinfo($dropbox_import_path . $entry, PATHINFO_EXTENSION);
                 if ($entry != "." && $entry != ".." && in_array($extension, $allowed_extension)) {
-                  DropBox::ConvertVideoFile($entry);
+                  DropBox::ConvertVideoFile($entry, $category);
                 }
               }
             }
           } else {
-            $dropbox_path = Settings::Get ('dropbox_path');
-            error_log($dropbox_path . $dropbox_file);
-            if(file_exists($dropbox_path . $dropbox_file)) {
-              DropBox::ConvertVideoFile($dropbox_file);
+            if(file_exists($dropbox_file)) {
+              DropBox::ConvertVideoFile($dropbox_file, $category);
               $message = 'Video <em>"'. $dropbox_file.'"</em> have been imported.';
               $message_type = 'success';
             } else {
-              $message = 'File <em>"'. $dropbox_path . $dropbox_file.'"</em> does not exist.';
+              $message = 'File <em>"'. $dropbox_file .'"</em> does not exist.';
               $message_type = 'error';
             }
           }
