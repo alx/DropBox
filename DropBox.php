@@ -23,7 +23,7 @@ class DropBox {
       Settings::Remove ("dropbox_path");
     }
 
-    static function ConvertVideoFile($filename, $category) {
+    static function ConvertVideoFile($file, $category) {
       App::LoadClass ('Video');
       App::LoadClass ('Category');
       App::LoadClass ('Settings');
@@ -34,14 +34,14 @@ class DropBox {
 
       $dropbox_path = Settings::Get ('dropbox_path');
 
-      $extension = Functions::GetExtension ($filename);
+      $extension = Functions::GetExtension ($file);
       if (!preg_match ("/$extension/i", Functions::GetVideoTypes ('fileDesc'))) {
         throw new Exception (Language::GetText('error_uploadify_extension'));
       }
 
-      $target = UPLOAD_PATH . '/temp/' . $filename;
-      if (copy($dropbox_path . $filename, $target)) {
-        unlink($dropbox_path . $filename);
+      $target = UPLOAD_PATH . '/temp/' . basename($file);
+      if (copy($file, $target)) {
+        unlink($file);
       }
 
       ### Change permissions on raw video file
@@ -63,8 +63,8 @@ class DropBox {
       }
 
       $data = array();
-      $data['title'] = htmlspecialchars (trim ( $filename ));
-      $data['filename'] = basename($filename, '.' . $extension);
+      $data['title'] = htmlspecialchars (trim ( $file ));
+      $data['filename'] = basename($file);
       $data['gated'] = '0';
       $data['private'] = '0';
       $data['disable_embed'] = '0';
