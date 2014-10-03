@@ -74,12 +74,74 @@ class DropBox {
       exec ($converter_cmd);
     }
 
+    static function displayDropboxCategory($path) {
+      App::LoadClass ('Settings');
+
+      $dropbox_path = Settings::Get ('dropbox_path');
+      $allowed_extension = array('mov', 'avi', 'mp4');
+
+      if($path == $dropbox_path) {
+        $category = "general";
+      } else {
+        $category = basename($path);
+      }
+
+      //get all files in specified directory
+      $files = glob($path . "*");
+
+?>
+<div class="block list">
+  <form method="post">
+    <input type="hidden" name="dropbox_import" value="true" />
+    <input type="hidden" name="dropbox_file" value="all" />
+    <input type="hidden" name="dropbox_path" value="<?=$path?>" />
+    <input class="button" type="submit" value="Import All" />
+  </form>
+  <table>
+    <thead>
+      <tr>
+        <td class="large">Filename</td>
+        <td class="large">Action</td>
+      </tr>
+    </thead>
+    <tbody>
+  <?php
+  //print each file name
+  foreach($files as $file) {
+    //check to see if the file is a folder/directory
+    if(!is_dir($file)) {
+      $extension = pathinfo($file, PATHINFO_EXTENSION);
+      if (in_array($extension, $allowed_extension)) {
+        $odd = empty ($odd) ? true : false;
+  ?>
+    <tr class="<?=$odd ? 'odd' : ''?>">
+      <td class="video-title"><?= basename($file) ?></td>
+      <td>
+        <form method="post">
+          <input type="hidden" name="dropbox_import" value="true" />
+          <input type="hidden" name="dropbox_path" value="<?= $path ?>" />
+          <input type="hidden" name="dropbox_file" value="<?= $file ?>" />
+          <input class="button" type="submit" value="Import" />
+        </form>
+      </td>
+    </tr>
+  <?php
+      }
+    }
+  }
+  ?>
+    </tbody>
+  </table>
+</div>
+<?php
+    }
+
+
     static function Settings() {
       App::LoadClass ('Settings');
 
       $dropbox_path = Settings::Get ('dropbox_path');
       $message = null;
-      $allowed_extension = array('mov', 'avi', 'mp4');
 
       if (isset ($_POST['dropbox_settings']) ) {
 
@@ -149,46 +211,26 @@ class DropBox {
 
 </div>
 
-<?php if($handle = opendir($dropbox_path)) { ?>
-<div class="block list">
-  <form method="post">
-    <input type="hidden" name="dropbox_import" value="true" />
-    <input type="hidden" name="dropbox_file" value="all" />
-    <input class="button" type="submit" value="Import All" />
-  </form>
-  <table>
-    <thead>
-      <tr>
-        <td class="large">Filename</td>
-        <td class="large">Action</td>
-      </tr>
-    </thead>
-    <tbody>
-  <?php
-  while (false !== ($entry = readdir($handle))) {
-    $extension = pathinfo($dropbox_path . $entry, PATHINFO_EXTENSION);
-    if ($entry != "." && $entry != ".." && in_array($extension, $allowed_extension)) {
-       $odd = empty ($odd) ? true : false;
-  ?>
-    <tr class="<?=$odd ? 'odd' : ''?>">
-      <td class="video-title"><?= $entry ?></td>
-      <td>
-        <form method="post">
-          <input type="hidden" name="dropbox_import" value="true" />
-          <input type="hidden" name="dropbox_file" value="<?= $entry ?>" />
-          <input class="button" type="submit" value="Import" />
-        </form>
-      </td>
-    </tr>
-  <?php
+<?php
+
+    if($handle = opendir($dropbox_path)) {
+
+      displayDropboxCategory($dropbox_path);
+
+      //get all files in specified directory
+      $files = glob($dropbox_path . "*");
+
+      //print each file name
+      foreach($files as $file) {
+        //check to see if the file is a folder/directory
+        if(is_dir($file)) {
+          displayDropboxCategory($file);
+        }
       }
-    }
-    closedir($handle);
-  ?>
-    </tbody>
-  </table>
-</div>
-<?php } else { ?>
+
+    } else {
+
+?>
 <div class="block">
 <p>Please set a path to display available video in dropbox.</p>
 </div>
