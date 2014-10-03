@@ -63,7 +63,7 @@ class DropBox {
       }
 
       $data = array();
-      $data['title'] = htmlspecialchars (trim ( $file ));
+      $data['title'] = htmlspecialchars (trim ( basename($file, $extension) ));
       $data['filename'] = basename($file);
       $data['gated'] = '0';
       $data['private'] = '0';
