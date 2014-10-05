@@ -202,7 +202,7 @@ class DropBox {
                 }
               }
             }
-          elseif($dropbox_file == 'last10') {
+          } elseif($dropbox_file == 'last10') {
             $dropbox_import_path = $_POST['dropbox_import_path'];
             if($handle = opendir($dropbox_import_path)) {
               $count = 0;
