@@ -115,6 +115,13 @@ class DropBox {
     <input type="hidden" name="dropbox_category" value="<?= $category ?>" />
     <input class="button" type="submit" value="Import All" style="float: right;right: 20px;position: relative;"/>
   </form>
+  <form method="post">
+    <input type="hidden" name="dropbox_import" value="true" />
+    <input type="hidden" name="dropbox_file" value="last10" />
+    <input type="hidden" name="dropbox_import_path" value="<?=$path ?>" />
+    <input type="hidden" name="dropbox_category" value="<?= $category ?>" />
+    <input class="button" type="submit" value="Import 10" style="float: right;right: 20px;position: relative;"/>
+  </form>
   <table>
     <thead>
       <tr>
@@ -193,6 +200,18 @@ class DropBox {
                 if ($entry != "." && $entry != ".." && in_array($extension, $allowed_extension)) {
                   DropBox::ConvertVideoFile($dropbox_import_path . $entry, $category);
                 }
+              }
+            }
+          elseif($dropbox_file == 'last10') {
+            $dropbox_import_path = $_POST['dropbox_import_path'];
+            if($handle = opendir($dropbox_import_path)) {
+              $count = 0;
+              while ($count < 10 && false !== ($entry = readdir($handle))) {
+                $extension = pathinfo($dropbox_import_path . $entry, PATHINFO_EXTENSION);
+                if ($entry != "." && $entry != ".." && in_array($extension, $allowed_extension)) {
+                  DropBox::ConvertVideoFile($dropbox_import_path . $entry, $category);
+                }
+                $count += 1;
               }
             }
           } else {
