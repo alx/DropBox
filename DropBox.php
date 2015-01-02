@@ -102,8 +102,19 @@ class DropBox {
 
       //get all files in specified directory
       $files = glob($path . "*");
+      $nb_files = 0;
 
-      if(sizeof($files) > 0) {
+      foreach($files as $file) {
+        //check to see if the file is a folder/directory
+        if(!is_dir($file)) {
+          $extension = pathinfo($file, PATHINFO_EXTENSION);
+          if (in_array($extension, $allowed_extension)) {
+            $nb_files += 1;
+          }
+        }
+      }
+
+      if($nb_files > 0) {
 
 ?>
 <div class="block list">
