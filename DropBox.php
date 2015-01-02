@@ -39,7 +39,7 @@ class DropBox {
         throw new Exception (Language::GetText('error_uploadify_extension'));
       }
 
-      $target = UPLOAD_PATH . '/temp/' . basename($file);
+      $target = UPLOAD_PATH . '/raw/' . basename($file);
       if (copy($file, $target)) {
         unlink($file);
       }
@@ -68,7 +68,6 @@ class DropBox {
       $data['gated'] = '0';
       $data['private'] = '0';
       $data['disable_embed'] = '0';
-      $data['cat_id'] = '1';
       $data['tags'] = '';
       $data['user_id'] = $admin->user_id;
       $data['original_extension'] = $extension;
@@ -79,9 +78,11 @@ class DropBox {
       error_log('video to convert : ' . $id);
 
       ### Initilize Encoder
+      /*
       $converter_cmd = 'nohup ' . Settings::Get ('php') . ' ' . DOC_ROOT . '/cc-core/system/encode.php --video="' . $id . '" >> /tmp/converter.log &';
       error_log($converter_cmd);
       exec ($converter_cmd);
+       */
     }
 
     static function displayDropboxCategory($path) {
